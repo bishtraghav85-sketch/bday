@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Baby! ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        night: { 900: '#0f0c29', 800: '#302b63', 700: '#24243e' },
+                        cute: { 
+                            pink: '#ff9a9e', 
+                            peach: '#fecfef', 
+                            gold: '#f6d365' 
+                        }
+                    },
+                    fontFamily: {
+                        'body': ['Nunito', 'sans-serif'],
+                        'love': ['Great Vibes', 'cursive'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; overflow-x: hidden; background: radial-gradient(circle at bottom, #302b63, #0f0c29); }
+        
+        /* --- GIFT BOX ANIMATION --- */
+        .gift-container { cursor: pointer; transition: transform 0.3s; }
+        .gift-container:hover { transform: scale(1.05); }
+        .gift-box {
+            width: 120px; height: 120px; background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            position: relative; margin: 0 auto; border-radius: 12px;
+            box-shadow: 0 0 40px rgba(255, 154, 158, 0.4);
+        }
+        .ribbon-vertical { position: absolute; width: 20px; height: 100%; background: #fff; left: 50px; }
+        .ribbon-horizontal { position: absolute; width: 100%; height: 20px; background: #fff; top: 50px; }
+        .bow {
+            position: absolute; top: -40px; left: 30px; width: 60px; height: 40px;
+        }
+        .bow::before, .bow::after {
+            content: ''; position: absolute; width: 40px; height: 40px;
+            border: 6px solid #fff; border-radius: 50%; top: 0;
+        }
+        .bow::before { left: -10px; transform: rotate(45deg); }
+        .bow::after { right: -10px; transform: rotate(-45deg); }
+
+        /* --- BEAUTIFUL CAKE CSS --- */
+        .cake-stage {
+            position: relative; width: 260px; height: 220px; margin: 0 auto;
+            cursor: pointer; transition: transform 0.3s;
+        }
+        .cake-stage:hover { transform: translateY(-5px); }
+
+        /* Plate */
+        .plate {
+            position: absolute; bottom: 0; left: -20px; width: 300px; height: 15px;
+            background: #e0e0e0; border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        /* Layers */
+        .layer { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 15px; }
+        
+        /* Bottom Layer (Chocolate) */
+        .layer-bottom {
+            bottom: 15px; width: 240px; height: 90px;
+            background: #5d4037;
+            background-image: radial-gradient(#8d6e63 10%, transparent 11%);
+            background-size: 20px 20px; /* Texture */
+            z-index: 1;
+        }
+
+        /* Top Layer (Strawberry Cream) */
+        .layer-top {
+            bottom: 105px; width: 180px; height: 70px;
+            background: #f8bbd0;
+            z-index: 2;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Dripping Icing */
+        .icing-drip {
+            position: absolute; top: 0; left: 0; width: 100%; height: 35px;
+            background: #fff; border-radius: 15px 15px 0 0;
+            z-index: 3;
+        }
+        .icing-drip::after {
+            content: ''; position: absolute; top: 25px; left: 0; width: 100%; height: 15px;
+            background: radial-gradient(circle at 15px 0px, #fff 10px, transparent 11px);
+            background-size: 30px 20px;
+        }
+        
+        /* Sprinkles */
+        .sprinkles {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(circle, #ffeb3b 2px, transparent 2.5px),
+                radial-gradient(circle, #4caf50 2px, transparent 2.5px),
+                radial-gradient(circle, #2196f3 2px, transparent 2.5px),
+                radial-gradient(circle, #f44336 2px, transparent 2.5px);
+            background-size: 40px 40px, 50px 50px, 60px 60px, 30px 30px;
+            background-position: 0 0, 20px 10px, 10px 20px, 30px 5px;
+            opacity: 0.7;
+        }
+
+        /* Candle */
+        .candle-holder {
+            position: absolute; bottom: 175px; left: 50%; transform: translateX(-50%);
+            width: 12px; height: 40px;
+            background: repeating-linear-gradient(45deg, #ff4081, #ff4081 5px, #fff 5px, #fff 10px);
+            border-radius: 4px; z-index: 4;
+        }
+        .flame-pretty {
+            position: absolute; top: -22px; left: 1px; width: 10px; height: 22px;
+            background: radial-gradient(ellipse at bottom, #fff6a9 0%, #ff9800 60%, #ff5722 90%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 20px #ff9800;
+            animation: flicker 0.8s infinite alternate;
+            transform-origin: center bottom;
+        }
+        @keyframes flicker { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.1) rotate(2deg); opacity: 0.9; } }
+        
+        .blown-out .flame-pretty { display: none; }
+        
+        /* Smoke Effect */
+        .smoke-puff {
+            position: absolute; top: -30px; left: 0; width: 10px; height: 10px;
+            background: rgba(255,255,255,0.6); border-radius: 50%;
+            animation: rise 2s forwards; opacity: 0;
+        }
+        @keyframes rise { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-50px) scale(3); } }
+
+        /* Photo Styles */
+        .polaroid-wrapper {
+            background: white; padding: 12px 12px 40px 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: rotate(-2deg); transition: all 0.4s;
+        }
+        .polaroid-wrapper:hover { transform: rotate(0) scale(1.05) translateY(-10px); z-index: 20; }
+        .tape-strip {
+            width: 80px; height: 25px; background: rgba(255,255,255,0.25);
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+            backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body class="text-white selection:bg-pink-500 selection:text-white min-h-screen">
+
+    <!-- PART 1: THE SURPRISE (Intro) -->
+    <div id="intro" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-night-900 transition-all duration-1000">
+        <div class="text-center mb-10 animate-float">
+            <h1 class="font-love text-5xl text-cute-pink mb-2">For My Birthday Boy</h1>
+            <p class="text-gray-400 text-sm tracking-widest uppercase">Tap to open your surprise</p>
+        </div>
+        
+        <div class="gift-container" onclick="openSurprise()">
+            <div class="gift-box">
+                <div class="ribbon-vertical"></div>
+                <div class="ribbon-horizontal"></div>
+                <div class="bow"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 2: THE MAIN CONTENT -->
+    <main id="content" class="hidden opacity-0 transition-opacity duration-1000 relative pb-20">
+        
+        <!-- Floating Hearts Background -->
+        <div id="hearts-bg" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+        <!-- Music Button -->
+        <div class="fixed top-5 right-5 z-40">
+            <button onclick="toggleMusic()" class="bg-white/10 backdrop-blur-md p-3 rounded-full text-cute-pink hover:scale-110 transition border border-white/20">
+                <i id="music-icon" class="fas fa-music"></i>
+            </button>
+            <audio id="bg-music" loop>
+                <source src="https://sound-effects-media.s3.amazonaws.com/mp3/romantic-music.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <!-- Header -->
+        <header class="pt-20 px-4 text-center relative z-10">
+            <div class="inline-block mb-4">
+                <span class="text-4xl animate-bounce inline-block">👑</span>
+            </div>
+            <h1 class="font-love text-7xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300 drop-shadow-lg mb-4">
+                Happy Birthday<br>My Love
+            </h1>
+            <p class="font-body text-xl text-gray-300 max-w-md mx-auto">
+                To the one who makes my world brighter, even from miles away.
+            </p>
+        </header>
+
+        <!-- CAKE SECTION -->
+        <section class="py-16 text-center relative z-10">
+            <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 max-w-lg mx-auto border border-white/10 shadow-2xl">
+                <h2 id="cake-msg" class="font-love text-3xl text-cute-gold mb-8 animate-pulse">Make a wish & blow out the candle!</h2>
+                
+                <div class="cake-stage" onclick="blowCandle()" id="cake">
+                    <div class="plate"></div>
+                    <!-- Bottom Layer -->
+                    <div class="layer layer-bottom"></div>
+                    <!-- Top Layer -->
+                    <div class="layer layer-top">
+                        <div class="icing-drip"></div>
+                        <div class="sprinkles"></div>
+                    </div>
+                    <!-- Candle -->
+                    <div class="candle-holder">
+                        <div class="flame-pretty"></div>
+                        <div class="smoke-puff"></div>
+                    </div>
+                </div>
+
+                <div id="hidden-wish" class="hidden mt-8 transform transition-all duration-500">
+                    <p class="text-2xl font-body text-pink-300 font-bold">I love you so much! 💖</p>
+                    <p class="text-sm text-gray-400 mt-2">May this year bring you everything you want.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHOTO GALLERY -->
+        <section class="py-16 px-4 relative z-10">
+            <h2 class="font-love text-5xl text-center text-white mb-16">Our Cute Moments</h2>
+            
+            <div class="flex flex-wrap justify-center gap-10 max-w-6xl mx-auto">
+                
+                <!-- Photo 1 -->
+                <div class="polaroid-wrapper transform -rotate-3">
+                    <div class="tape-strip"></div>
+                    <div class="w-64 h-64 overflow-hidden bg-gray-200 rounded-sm">
+                        <img src="pic1.jpeg" class="w-full h-full object-cover" alt="Memory 1">
+                    </div>
+                    <div class="text-center mt-4 font-love text-3xl text-gray-800">Pure Joy</div>
+                </div>
+
+                <!-- Photo 2 -->
+                <div class="polaroid-wrapper transform rotate-3 z-20 -mt-0 md:-mt-10">
+                    <div class="tape-strip"></div>
+                    <div class="w-64 h-64 overflow-hidden bg-gray-200 rounded-sm">
+                        <img src="pic2.jpeg" class="w-full h-full object-cover" alt="Memory 2">
+                    </div>
+                    <div class="text-center mt-4 font-love text-3xl text-gray-800">My Safe Place</div>
+                    <i class="fas fa-heart text-red-500 absolute bottom-14 right-4 text-2xl animate-bounce"></i>
+                </div>
+
+                <!-- Photo 3 -->
+                <div class="polaroid-wrapper transform -rotate-2">
+                    <div class="tape-strip"></div>
+                    <div class="w-64 h-64 overflow-hidden bg-gray-200 rounded-sm">
+                        <img src="pic3.jpeg" class="w-full h-full object-cover" alt="Memory 3">
+                    </div>
+                    <div class="text-center mt-4 font-love text-3xl text-gray-800">Forever Us</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- INTERACTIVE: "WHY I LOVE YOU" -->
+        <section class="py-16 px-4 text-center max-w-2xl mx-auto">
+            <div class="bg-pink-500/20 rounded-3xl p-8 border border-pink-500/30 relative overflow-hidden">
+                <i class="fas fa-quote-left text-4xl text-white/20 absolute top-4 left-4"></i>
+                
+                <h3 class="text-2xl font-bold text-white mb-6">Why You Are Special</h3>
+                <p id="love-note" class="text-xl font-love text-pink-200 min-h-[60px] transition-all">
+                    Tap the button below for a reason...
+                </p>
+                
+                <button onclick="generateReason()" class="mt-8 bg-white text-pink-600 hover:bg-pink-50 font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105">
+                    <i class="fas fa-magic mr-2"></i> Tell me why
+                </button>
+            </div>
+        </section>
+
+        <!-- FOOTER: KISSES -->
+        <section class="py-12 text-center">
+            <button onclick="rainingKisses()" class="group bg-gradient-to-r from-red-500 to-pink-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-pink-500/50 transition-all transform active:scale-95">
+                <span class="group-hover:hidden">Birthday Kisses 💋 (click it)</span>
+                <span class="hidden group-hover:inline">Muah! Muah! Muah! 💋</span>
+            </button>
+            <p class="mt-8 text-gray-500 text-xs">Made with ❤️ only for you.</p>
+        </section>
+
+    </main>
+
+    <script>
+        // 1. Open Surprise
+        function openSurprise() {
+            const intro = document.getElementById('intro');
+            const content = document.getElementById('content');
+            const audio = document.getElementById('bg-music');
+            
+            // Transition
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.classList.add('hidden');
+                content.classList.remove('hidden');
+                setTimeout(() => content.classList.remove('opacity-0'), 100);
+                
+                // Confetti
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff9a9e', '#fecfef', '#ffffff']
+                });
+                
+                // Attempt Audio Play
+                audio.play().catch(e => console.log("Audio blocked"));
+            }, 800);
+            
+            startFloatingHearts();
+        }
+
+        // 2. Cake Logic
+        let isBlown = false;
+        function blowCandle() {
+            if (isBlown) return;
+            
+            const cake = document.getElementById('cake');
+            const msg = document.getElementById('cake-msg');
+            const wish = document.getElementById('hidden-wish');
+            
+            cake.classList.add('blown-out'); // CSS handles hiding flame / showing smoke
+            isBlown = true;
+            
+            msg.innerText = "Yay! Happy Birthday Baby! 🎂";
+            msg.classList.remove('animate-pulse');
+            msg.classList.add('text-pink-300');
+            
+            wish.classList.remove('hidden');
+            
+            // Fireworks
+            const duration = 3000;
+            const end = Date.now() + duration;
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff9a9e', '#ffd700']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff9a9e', '#ffd700']
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        // 3. Love Reasons
+        const reasons = [
+            "Your smile is my favorite thing in the world.",
+            "You give the warmest hugs (even virtually).",
+            "You make me laugh when I don't want to.",
+            "You are my best friend and my love.",
+            "I feel safe whenever I talk to you.",
+            "You are the best boyfriend ever.",
+            "Every day with you is a blessing."
+        ];
+        function generateReason() {
+            const note = document.getElementById('love-note');
+            note.style.opacity = 0;
+            setTimeout(() => {
+                note.innerText = reasons[Math.floor(Math.random() * reasons.length)];
+                note.style.opacity = 1;
+            }, 300);
+        }
+
+        // 4. Raining Kisses
+        function rainingKisses() {
+            for(let i=0; i<15; i++) {
+                setTimeout(() => {
+                    const kiss = document.createElement('div');
+                    kiss.innerText = '💋';
+                    kiss.style.position = 'fixed';
+                    kiss.style.left = Math.random() * 100 + 'vw';
+                    kiss.style.top = '-50px';
+                    kiss.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                    kiss.style.transition = 'top 3s ease-in, opacity 3s ease-in';
+                    kiss.style.zIndex = 100;
+                    document.body.appendChild(kiss);
+
+                    setTimeout(() => {
+                        kiss.style.top = '110vh';
+                        kiss.style.opacity = '0';
+                    }, 100);
+
+                    setTimeout(() => kiss.remove(), 3000);
+                }, i * 100);
+            }
+        }
+
+        // 5. Floating Hearts Background
+        function startFloatingHearts() {
+            const container = document.getElementById('hearts-bg');
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('fas', 'fa-heart', 'text-pink-500', 'absolute', 'opacity-20');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.transition = `top ${Math.random() * 5 + 5}s linear, opacity 5s`;
+                
+                container.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.style.top = '-50px';
+                    heart.style.opacity = '0';
+                }, 100);
+                
+                setTimeout(() => heart.remove(), 10000);
+            }, 500);
+        }
+
+        // 6. Music Toggle
+        let playing = false;
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            if(playing) { audio.pause(); playing=false; }
+            else { audio.play(); playing=true; }
+        }
+    </script>
+</body>
+</html>
